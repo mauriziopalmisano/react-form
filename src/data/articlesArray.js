@@ -1,4 +1,4 @@
-const articles = [
+const articlesArray = [
   {
     id: 1,
     title: "Il Futuro dell'Intelligenza Artificiale",
@@ -31,4 +31,4 @@ const articles = [
   }
 ];
 
-export default articles
+export default articlesArray

@@ -1,29 +1,72 @@
 import { useState } from 'react'
-import articles from './data/articles'
+import articlesArray from './data/articlesArray'
 import Article from './components/Article';
+import Form from './components/Form';
+
 
 
 
 function App() {
 
+  const emptyArticle = {
+    title : '',
+    content : ''
+}
+
+  const [articles, setArticles] = useState(articlesArray);
+  const [article, setArticle] = useState(emptyArticle)
+
+  const changeHandler = (event) => {
+    const target = event.target;
+    const targetValue = target.value;
+    const targetName = target.name;
+
+    const newArticle = { ...article, [targetName]: targetValue };
+    setArticle(newArticle);
+  }
+
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+    const articleSubmitted = { ...article, id: crypto.randomUUID() };
+    const updatedArticlesList = [ ...articles, articleSubmitted ];
+    setArticles(updatedArticlesList);
+  }
+
+
+  const removeArticle = (id) => {
+    const updatedArticlesList = articles.filter(article => article.id !== id);
+    setArticles(updatedArticlesList);
+  }
+
 
   return (
-    <div className='container'>
-      <ul className='row'>
-        {articles.map(article => {
-          const { id, title, content } = article;
-          return (
-            <li className='col-4' key={id}>
-              <Article
-                id={id}
-                title={title}
-                content={content}
-              />
-            </li>
-          )
-        })}
-      </ul>
-    </div>
+    <>
+      <div className='container'>
+        <ul className='row'>
+          {articles.map(articleEl => {
+            const { id, title, content } = articleEl;
+            return (
+              <li className='col-4' key={id}>
+                <Article
+                  id={id}
+                  title={title}
+                  content={content}
+                  remove = {removeArticle}
+                />
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+      <div className='container'>
+        <Form
+          submit = {submitHandler}
+          change = {changeHandler}
+        />
+      </div>
+    </>
   )
 }
 
