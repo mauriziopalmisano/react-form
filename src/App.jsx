@@ -9,12 +9,12 @@ import Form from './components/Form';
 function App() {
 
   const emptyArticle = {
-    title : '',
+    title : '', 
     content : ''
 }
 
   const [articles, setArticles] = useState(articlesArray);
-  const [article, setArticle] = useState(emptyArticle)
+  const [article, setArticle] = useState(emptyArticle);
 
   const changeHandler = (event) => {
     const target = event.target;
@@ -22,16 +22,23 @@ function App() {
     const targetName = target.name;
 
     const newArticle = { ...article, [targetName]: targetValue };
+    console.log(newArticle);
+    
     setArticle(newArticle);
   }
 
 
   const submitHandler = (event) => {
     event.preventDefault();
-
-    const articleSubmitted = { ...article, id: crypto.randomUUID() };
-    const updatedArticlesList = [ ...articles, articleSubmitted ];
-    setArticles(updatedArticlesList);
+    if (article.id) {
+      const editedArticles = articles.map(articleEL => articleEL.id === article.id ? article : articleEL);
+      setArticles(editedArticles);
+    }else { 
+      const articleSubmitted = { ...article, id: crypto.randomUUID() };
+      const updatedArticlesList = [ ...articles, articleSubmitted ];
+      setArticles(updatedArticlesList);
+    }
+    setArticle(emptyArticle);
   }
 
 
@@ -40,30 +47,38 @@ function App() {
     setArticles(updatedArticlesList);
   }
 
+  const editArticle = (id) => {
+    const articleToEdit = articles.find(article => article.id === id);
+    setArticle(articleToEdit);
+  }
+
 
   return (
     <>
-      <div className='container'>
-        <ul className='row'>
+      <div className ='container'>
+        <ul className ='row'>
           {articles.map(articleEl => {
             const { id, title, content } = articleEl;
             return (
-              <li className='col-4' key={id}>
+              <li className ='col-4' key = {id}>
                 <Article
-                  id={id}
-                  title={title}
-                  content={content}
+                  id = {id}
+                  title = {title}
+                  content = {content}
                   remove = {removeArticle}
+                  edit = {editArticle}
                 />
               </li>
             )
           })}
         </ul>
       </div>
-      <div className='container'>
+      <div className ='container'>
         <Form
+          article = {article}
           submit = {submitHandler}
           change = {changeHandler}
+          isEditing = {article.id ? true : false}
         />
       </div>
     </>
